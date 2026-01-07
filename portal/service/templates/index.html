@@ -1,67 +1,516 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Identity Portal (Dina) - Token Inspector</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DINA - Identity Admin/Inspector Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #555;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .output {
+            background: #282c34;
+            color: #61dafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        .token-info {
+            background: white;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .info-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-value {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .test-section h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Identity Portal (Dina)</h1>
-    <p class="muted">Integrasi Identity (internal) + Attendance (Ratu public). Fokus: auth/token & verifikasi endpoint protected.</p>
-
-    <div class="card">
-      <h2>Token / Session</h2>
-      <div class="row">
-        <button id="btnLogout">Logout</button>
-        <button id="btnMe">GET /auth/me</button>
-      </div>
-      <div class="muted">Token: <span id="tokenPreview">-</span></div>
-      <pre id="meOut" class="out"></pre>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h2>Register</h2>
-        <label>Username</label><input id="regUser" />
-        <label>Password</label><input id="regPass" type="password" />
-        <label>Role</label>
-        <select id="regRole">
-          <option value="committee">committee</option>
-          <option value="admin">admin</option>
-        </select>
-        <button id="btnRegister">Register</button>
-        <pre id="regOut" class="out"></pre>
-      </div>
-
-      <div class="card">
-        <h2>Login</h2>
-        <label>Username</label><input id="logUser" />
-        <label>Password</label><input id="logPass" type="password" />
-        <button id="btnLogin">Login</button>
-        <pre id="logOut" class="out"></pre>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>Attendance Verification (Ratu)</h2>
-      <div class="grid">
-        <div>
-          <label>event_id</label><input id="attEvent" placeholder="E001" />
-          <button id="btnAttendance">GET /attendance/{event_id}</button>
-          <pre id="attOut" class="out"></pre>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 DINA Admin/Inspector Portal</h1>
+            <p>Identity Service Authentication & Ratu Integration Verification</p>
         </div>
-        <div>
-          <label>ticket_id (test check-in)</label><input id="ciTicket" placeholder="T001" />
-          <button id="btnCheckin">POST /checkins</button>
-          <pre id="ciOut" class="out"></pre>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <script src="/static/app.js"></script>
+        <div class="content">
+            <!-- Token Info Section -->
+            <div class="token-info">
+                <div class="section-title">📋 Current Session</div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Username</div>
+                        <div class="info-value" id="infoUsername">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Role</div>
+                        <div class="info-value" id="infoRole">-</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value" id="infoStatus"><span class="status-badge status-invalid">Not Logged In</span></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Token</div>
+                        <div class="info-value" id="infoToken">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Auth Section -->
+            <div class="section">
+                <div class="section-title">🔑 Authentication</div>
+                <div class="grid">
+                    <div class="card">
+                        <h3 style="margin-bottom: 15px;">Register New User</h3>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="regUser" placeholder="Enter username">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="regPass" placeholder="Enter password">
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select id="regRole">
+                                <option value="user">User</option>
+                                <option value="committee">Committee</option>
+                                <option value="admin">Admin</option>
+                                <option value="inspector">Inspector</option>
+                            </select>
+                        </div>
+                        <button onclick="register()">Register</button>
+                        <div class="output" id="regOut"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="margin-bottom: 15px;">Login</h3>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" id="logUser" placeholder="testuser" value="testuser">
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="logPass" placeholder="password" value="password123">
+                        </div>
+                        <button onclick="login()">Login</button>
+                        <button onclick="validateToken()" style="margin-top: 10px; background: #17a2b8;">Validate Token</button>
+                        <div class="output" id="logOut"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Section -->
+            <div class="section">
+                <div class="section-title">🧪 API Tests</div>
+
+                <div class="test-section">
+                    <h3>Identity Service Tests</h3>
+                    <div class="button-group">
+                        <button onclick="testHealth()">Health Check</button>
+                        <button onclick="validateToken()">Validate Token (/auth/me)</button>
+                        <button onclick="logout()">Logout</button>
+                    </div>
+                </div>
+
+                <div class="test-section">
+                    <h3>Ratu Attendance Integration Tests</h3>
+                    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Test Ratu's endpoints (requires valid token)</p>
+
+                    <div class="grid">
+                        <div class="card">
+                            <label>Event ID</label>
+                            <input type="text" id="attEvent" placeholder="event_001" value="event_001">
+                            <button onclick="getAttendance()" style="margin-top: 10px;">GET /attendance/{event_id}</button>
+                            <div class="output" id="attOut"></div>
+                        </div>
+
+                        <div class="card">
+                            <label>User ID for Check-in</label>
+                            <input type="text" id="ciUser" placeholder="user_001" value="user_001">
+                            <button onclick="createCheckin()" style="margin-top: 10px;">POST /checkins</button>
+                            <div class="output" id="ciOut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentToken = localStorage.getItem('dina_token') || null;
+
+        window.addEventListener('DOMContentLoaded', function() {
+            if (currentToken) {
+                updateUI();
+                validateToken();
+            }
+        });
+
+        async function register() {
+            const username = document.getElementById('regUser').value;
+            const password = document.getElementById('regPass').value;
+            const role = document.getElementById('regRole').value;
+
+            if (!username || !password) {
+                showOutput('regOut', 'Username and password required', 'error');
+                return;
+            }
+
+            try {
+                showOutput('regOut', 'Registering...');
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, role })
+                });
+                const data = await response.json();
+                showOutput('regOut', JSON.stringify(data, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showOutput('regOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('logUser').value;
+            const password = document.getElementById('logPass').value;
+
+            if (!username || !password) {
+                showOutput('logOut', 'Username and password required', 'error');
+                return;
+            }
+
+            try {
+                showOutput('logOut', 'Logging in...');
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    currentToken = data.access_token;
+                    localStorage.setItem('dina_token', currentToken);
+                    updateUI();
+                    showOutput('logOut', `Login successful!\n\nToken: ${currentToken.substring(0, 80)}...`, 'success');
+                    validateToken();
+                } else {
+                    showOutput('logOut', JSON.stringify(data, null, 2), 'error');
+                }
+            } catch (error) {
+                showOutput('logOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function validateToken() {
+            if (!currentToken) {
+                showOutput('logOut', 'No token. Please login first.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/auth/me', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('infoUsername').textContent = data.username;
+                    document.getElementById('infoRole').textContent = data.role || '-';
+                    document.getElementById('infoStatus').innerHTML = '<span class="status-badge status-valid">✓ Valid</span>';
+                    document.getElementById('infoToken').textContent = currentToken.substring(0, 40) + '...';
+                    showOutput('logOut', JSON.stringify(data, null, 2), 'success');
+                } else {
+                    document.getElementById('infoStatus').innerHTML = '<span class="status-badge status-invalid">✗ Invalid</span>';
+                    showOutput('logOut', JSON.stringify(data, null, 2), 'error');
+                }
+            } catch (error) {
+                showOutput('logOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const data = await response.json();
+                showOutput('logOut', JSON.stringify(data, null, 2), 'success');
+            } catch (error) {
+                showOutput('logOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function getAttendance() {
+            if (!currentToken) {
+                showOutput('attOut', 'No token. Please login first.', 'error');
+                return;
+            }
+
+            const eventId = document.getElementById('attEvent').value;
+            try {
+                showOutput('attOut', 'Fetching attendance...');
+                const response = await fetch(`/api/test-ratu/attendance/${eventId}`, {
+                    headers: { 'Authorization': `Bearer ${currentToken}` }
+                });
+                const data = await response.json();
+                showOutput('attOut', JSON.stringify(data, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showOutput('attOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function createCheckin() {
+            if (!currentToken) {
+                showOutput('ciOut', 'No token. Please login first.', 'error');
+                return;
+            }
+
+            const userId = document.getElementById('ciUser').value;
+            const eventId = document.getElementById('attEvent').value;
+            try {
+                showOutput('ciOut', 'Creating check-in...');
+                const response = await fetch('/api/test-ratu/checkins', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({
+                        event_id: eventId,
+                        user_id: userId,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+                const data = await response.json();
+                showOutput('ciOut', JSON.stringify(data, null, 2), response.ok ? 'success' : 'error');
+            } catch (error) {
+                showOutput('ciOut', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function logout() {
+            currentToken = null;
+            localStorage.removeItem('dina_token');
+            document.getElementById('infoUsername').textContent = '-';
+            document.getElementById('infoRole').textContent = '-';
+            document.getElementById('infoStatus').innerHTML = '<span class="status-badge status-invalid">Not Logged In</span>';
+            document.getElementById('infoToken').textContent = '-';
+            showOutput('logOut', 'Logged out successfully.', 'success');
+        }
+
+        function updateUI() {
+            if (currentToken) {
+                document.getElementById('infoToken').textContent = currentToken.substring(0, 40) + '...';
+            }
+        }
+
+        function showOutput(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.color = type === 'error' ? '#ff6b6b' : type === 'success' ? '#51cf66' : '#61dafb';
+        }
+    </script>
 </body>
 </html>
 

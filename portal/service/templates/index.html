@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Identity Portal (Dina) - Token Inspector</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Identity Portal (Dina)</h1>
+    <p class="muted">Integrasi Identity (internal) + Attendance (Ratu public). Fokus: auth/token & verifikasi endpoint protected.</p>
+
+    <div class="card">
+      <h2>Token / Session</h2>
+      <div class="row">
+        <button id="btnLogout">Logout</button>
+        <button id="btnMe">GET /auth/me</button>
+      </div>
+      <div class="muted">Token: <span id="tokenPreview">-</span></div>
+      <pre id="meOut" class="out"></pre>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Register</h2>
+        <label>Username</label><input id="regUser" />
+        <label>Password</label><input id="regPass" type="password" />
+        <label>Role</label>
+        <select id="regRole">
+          <option value="committee">committee</option>
+          <option value="admin">admin</option>
+        </select>
+        <button id="btnRegister">Register</button>
+        <pre id="regOut" class="out"></pre>
+      </div>
+
+      <div class="card">
+        <h2>Login</h2>
+        <label>Username</label><input id="logUser" />
+        <label>Password</label><input id="logPass" type="password" />
+        <button id="btnLogin">Login</button>
+        <pre id="logOut" class="out"></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Attendance Verification (Ratu)</h2>
+      <div class="grid">
+        <div>
+          <label>event_id</label><input id="attEvent" placeholder="E001" />
+          <button id="btnAttendance">GET /attendance/{event_id}</button>
+          <pre id="attOut" class="out"></pre>
+        </div>
+        <div>
+          <label>ticket_id (test check-in)</label><input id="ciTicket" placeholder="T001" />
+          <button id="btnCheckin">POST /checkins</button>
+          <pre id="ciOut" class="out"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
+

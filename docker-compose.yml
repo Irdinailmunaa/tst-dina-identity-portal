@@ -1,0 +1,17 @@
+services:
+  identity:
+    build: ./identity_service
+    env_file: .env
+    ports: ["18081:8000"]
+    networks: [tixgo-net]
+
+  portal:
+    build: ./portal_service
+    env_file: .env
+    ports: ["18082:8000"]
+    depends_on: [identity]
+    networks: [tixgo-net]
+
+networks:
+  tixgo-net:
+    driver: bridge

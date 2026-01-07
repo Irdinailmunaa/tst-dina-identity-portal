@@ -1,0 +1,13 @@
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system;margin:0;background:#fbfbfb;color:#111}
+.container{max-width:980px;margin:0 auto;padding:24px}
+.muted{color:#555;font-size:14px}
+.card{background:#fff;border:1px solid #e7e7e7;border-radius:12px;padding:16px;margin:14px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+label{display:block;margin:10px 0 6px;font-weight:600;font-size:14px}
+input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #ddd}
+button{margin-top:12px;padding:10px 12px;border-radius:10px;border:1px solid #ddd;background:#111;color:#fff;cursor:pointer}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.out{background:#0b1020;color:#d6e1ff;padding:12px;border-radius:10px;overflow:auto;min-height:60px}
+

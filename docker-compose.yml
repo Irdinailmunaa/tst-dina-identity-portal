@@ -1,17 +1,44 @@
 services:
-  identity:
-    build: ./identity_service
+  identity-service:
+    build:
+      context: ./identity/service
+      dockerfile: Dockerfile
+    container_name: identity-service
+    env_file: .env
+    ports: ["18080:8000"]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://user:password@db:5432/identity
+    networks: [dina-net]
+
+  portal-service:
+    build:
+      context: ./portal/service
+      dockerfile: Dockerfile
+    container_name: portal-service
     env_file: .env
     ports: ["18081:8000"]
-    networks: [tixgo-net]
+    depends_on: [identity-service]
+    environment:
+      - IDENTITY_SERVICE_URL=http://identity-service:8000
+    networks: [dina-net]
 
-  portal:
-    build: ./portal_service
-    env_file: .env
-    ports: ["18082:8000"]
-    depends_on: [identity]
-    networks: [tixgo-net]
+  db:
+    image: postgres:15-alpine
+    container_name: dina-db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: identity
+    ports: ["5433:5432"]
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks: [dina-net]
+
+volumes:
+  postgres_data:
 
 networks:
-  tixgo-net:
+  dina-net:
     driver: bridge

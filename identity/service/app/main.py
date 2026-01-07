@@ -16,6 +16,21 @@ class LoginRequest(BaseModel):
     username: str = Field(..., min_length=1)
     password: str = Field(..., min_length=1)
 
+@app.get("/")
+def root():
+    return {
+        "message": "Welcome to TST Identity Service (Dina)",
+        "version": "1.0.0",
+        "endpoints": {
+            "health": "/health",
+            "register": "POST /auth/register",
+            "login": "POST /auth/login",
+            "me": "GET /auth/me",
+            "docs": "/docs",
+            "redoc": "/redoc"
+        }
+    }
+
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "identity"}

@@ -1,18 +1,50 @@
 services:
-  identity:
-    build: ./identity_service
-    env_file: .env
+  identity-service:
+    build:
+      context: ./identity/service
+      dockerfile: Dockerfile
+    container_name: identity-service-prod
+    env_file: .env.production
     expose: ["8000"]
-    networks: [tixgo-net]
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://dina_user:dina_password_secure@db:5432/identity_production
+    networks: [dina-prod-net]
+    restart: unless-stopped
 
-  portal:
-    build: ./portal_service
-    env_file: .env
+  portal-service:
+    build:
+      context: ./portal/service
+      dockerfile: Dockerfile
+    container_name: portal-service-prod
+    env_file: .env.production
     ports: ["18081:8000"]
-    depends_on: [identity]
-    networks: [tixgo-net]
+    depends_on: [identity-service]
+    environment:
+      - IDENTITY_SERVICE_URL=http://identity-service:8000
+    networks: [dina-prod-net]
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: dina-db-prod
+    env_file: .env.production
+    expose: ["5432"]
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+    networks: [dina-prod-net]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dina_user -d identity_production"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_prod_data:
 
 networks:
-  tixgo-net:
+  dina-prod-net:
     driver: bridge
 

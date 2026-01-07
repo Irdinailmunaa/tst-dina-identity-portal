@@ -19,10 +19,21 @@ services:
       dockerfile: Dockerfile
     container_name: portal-service-prod
     env_file: .env.production
-    ports: ["18081:8000"]
+    expose: ["8000"]
     depends_on: [identity-service]
     environment:
       - IDENTITY_SERVICE_URL=http://identity-service:8000
+    networks: [dina-prod-net]
+    restart: unless-stopped
+
+  nginx-proxy:
+    image: nginx:latest
+    container_name: nginx-proxy-prod
+    ports:
+      - "18081:80"
+    volumes:
+      - ./nginx-prod.conf:/etc/nginx/nginx.conf:ro
+    depends_on: [portal-service]
     networks: [dina-prod-net]
     restart: unless-stopped
 

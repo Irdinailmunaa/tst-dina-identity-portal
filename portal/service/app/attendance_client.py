@@ -286,6 +286,16 @@ class AttendanceClient:
                         status_code=401,
                         detail="Authentication failed - token invalid or expired"
                     )
+                elif response.status_code == 405:
+                    raise HTTPException(
+                        status_code=405,
+                        detail="Endpoint not supported by Ratu API"
+                    )
+                elif response.status_code == 404:
+                    raise HTTPException(
+                        status_code=404,
+                        detail="Checkins not found"
+                    )
                 elif response.status_code >= 500:
                     raise HTTPException(
                         status_code=502,

@@ -13,10 +13,10 @@ body{
   top:0;
   left:0;
   right:0;
-  /* light translucent purple header */
-  background:rgba(237,229,255,0.75);
+  /* translucent white header */
+  background:rgba(255,255,255,0.85);
   backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(124,58,237,0.08);
+  border-bottom:1px solid rgba(0,0,0,0.05);
   z-index:1000;
   padding:0 24px;
 }

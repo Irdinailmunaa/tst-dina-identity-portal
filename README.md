@@ -69,7 +69,7 @@ tst-dina-identity-portal/
 URL: https://dina.theokaitou.my.id
 Port: 443 (HTTPS)
 Status: Public (via Cloudflare Tunnel)
-
+```
 
 **Fitur yang tersedia:**
 - User Registration & Login
@@ -245,7 +245,7 @@ curl -s -X GET http://localhost:18080/auth/me \
 
 ---
 
-## TUGAS 3: Identity Portal + Attendance Integration
+## Identity Portal + Attendance Integration
 
 ### Portal Endpoints (Integrated with Ratu)
 

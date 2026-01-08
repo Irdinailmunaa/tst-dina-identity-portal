@@ -6,16 +6,16 @@
 
 | Tugas | Komponen | Status | Deskripsi |
 |-------|----------|--------|-----------|
-| TUGAS 2 | Identity Service | ✓ PRODUCTION READY | Core authentication service dengan JWT, user registration, login, dan token validation |
-| TUGAS 3 | Identity Portal + Ratu Integration | ✓ DEPLOYMENT READY | Admin/Committee portal dengan integrated attendance check-in system dari Ratu |
+| TUGAS 2 | Identity Service | PRODUCTION READY | Core authentication service dengan JWT, user registration, login, dan token validation |
+| TUGAS 3 | Identity Portal + Ratu Integration | DEPLOYMENT READY | Admin/Committee portal dengan integrated attendance check-in system dari Ratu |
 
 ### Fitur Utama
-- ✓ User authentication dengan JWT (HS256)
-- ✓ Role-based access control (admin, committee, user)
-- ✓ Integrated attendance verification
-- ✓ Real-time check-in management
-- ✓ Microservices architecture
-- ✓ Production-ready deployment
+- User authentication dengan JWT (HS256)
+- Role-based access control (admin, committee, user)
+- Integrated attendance verification
+- Real-time check-in management
+- Microservices architecture
+- Production-ready deployment
 
 ---
 
@@ -148,21 +148,21 @@ curl http://localhost:18080/health | jq .
 | Method | Endpoint | Purpose | Auth |
 |--------|----------|---------|------|
 | GET | `/` | Welcome & endpoint list | No |
-| GET | `/health` | Health check | ❌ |
-| POST | `/auth/register` | Register user | ❌ |
-| POST | `/auth/login` | Login & get JWT | ❌ |
-| GET | `/auth/me` | Get current user info | ✓ Bearer token |
+| GET | `/health` | Health check | No |
+| POST | `/auth/register` | Register user | No |
+| POST | `/auth/login` | Login & get JWT | No |
+| GET | `/auth/me` | Get current user info |  Bearer token |
 | GET | `/docs` | Swagger UI | ❌ |
 
 ### API Examples (Curl Commands)
 
-#### 1️⃣ Health Check
+#### Health Check
 ```bash
 curl -s http://localhost:18080/health | jq .
 # Response: {"status":"ok","service":"identity"}
 ```
 
-#### 2️⃣ Register New User
+#### Register New User
 ```bash
 curl -X POST http://localhost:18080/auth/register \
   -H "Content-Type: application/json" \
@@ -180,7 +180,7 @@ curl -X POST http://localhost:18080/auth/register \
 # }
 ```
 
-#### 3️⃣ Login (Get JWT Token)
+#### Login (Get JWT Token)
 ```bash
 curl -X POST http://localhost:18080/auth/login \
   -H "Content-Type: application/json" \
@@ -196,7 +196,7 @@ curl -X POST http://localhost:18080/auth/login \
 # }
 ```
 
-#### 4️⃣ Use Token to Get User Info (Protected Endpoint)
+#### Use Token to Get User Info (Protected Endpoint)
 ```bash
 TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 
@@ -418,7 +418,7 @@ Identity Service:        http://localhost:8000 (internal Docker)
 Database:               postgresql://dina_user:password@db:5432/identity
 ```
 
-### 🚀 Deployment Steps
+### Deployment Steps
 
 #### Prerequisites
 - SSH access ke STB via Cloudflare
@@ -535,7 +535,7 @@ docker-compose -f docker-compose.prod.yml logs -f dina-db-prod
 
 ## Documentation Structure
 
-## 📚 Documentation Structure
+## Documentation Structure
 
 Dokumentasi lengkap tersedia dalam file-file berikut:
 
@@ -625,24 +625,24 @@ sequenceDiagram
 
 ### Security Features
 
-✓ JWT Authentication
+ JWT Authentication
 - Algorithm: HS256
 - Shared secret: `RatuDinaTST2026_`
 - Expiry: 60 minutes
 - Claims: sub (user_id), role, iat, exp
 
-✓ Password Security
+ Password Security
 - Hashing: Bcrypt with salt rounds 12
 - Never stored in plain text
 - Comparison done securely
 
-✓ API Security
+ API Security
 - Bearer token in Authorization header
 - Protected endpoints require valid JWT
 - Token claims validated on each request
 - Proper error handling (no info leakage)
 
-✓ Data Security
+ Data Security
 - Database credentials in environment variables
 - Secrets not committed to git
 - HTTPS/TLS for all external communication
@@ -650,7 +650,7 @@ sequenceDiagram
 
 ---
 
-## � Configuration Reference
+## Configuration Reference
 
 ### Development (.env)
 ```env
@@ -673,7 +673,7 @@ POSTGRES_PASSWORD=<strong-password>
 
 ---
 
-## 📦 Technology Stack
+## Technology Stack
 
 | Component | Technology | Version |
 |-----------|-----------|---------|
@@ -690,7 +690,7 @@ POSTGRES_PASSWORD=<strong-password>
 
 ---
 
-## � Port Mapping
+## Port Mapping
 
 | Service | Development | Production | Type |
 |---------|-------------|-----------|------|
@@ -700,7 +700,7 @@ POSTGRES_PASSWORD=<strong-password>
 
 ---
 
-## �🐳 Docker Commands
+## Docker Commands
 
 ```bash
 # Development - Start/Stop
@@ -716,40 +716,23 @@ docker-compose -f docker-compose.prod.yml down
 docker-compose -f docker-compose.prod.yml logs -f
 docker-compose -f docker-compose.prod.yml ps
 ```
-
 ---
 
-## ✓ Deployment Checklist
-
-- [ ] Verify local tests passing (curl commands above)
-- [ ] Review TUGAS_2.md document
-- [ ] SSH access ke STB working
-- [ ] Clone repository ke /opt on STB
-- [ ] Configure .env.production dengan secure secrets
-- [ ] Generate strong JWT_SECRET: `openssl rand -hex 32`
-- [ ] Build images: `docker-compose -f docker-compose.prod.yml build`
-- [ ] Start services: `docker-compose -f docker-compose.prod.yml up -d`
-- [ ] Test health endpoint: `curl https://dina.theokaitou.my.id:18080/health`
-- [ ] Test register/login endpoints
-- [ ] Check logs untuk errors
-- [ ] Monitor service health
-
----
 
 ## Security Features
 
-✓ **Authentication & Authorization**
+ **Authentication & Authorization**
 - JWT token-based authentication (HS256 algorithm)
 - Bcrypt password hashing (salt rounds: 12)
 - Bearer token in Authorization header
 - 60-minute token expiry
 
-✓ **Data Protection**
+ **Data Protection**
 - Environment variables for secrets (not in git)
 - PostgreSQL connection encrypted
 - HTTPS support for production
 
-✓ **API Security**
+ **API Security**
 - Input validation (Pydantic)
 - Protected endpoints requiring JWT
 - Error handling without information leakage
@@ -815,95 +798,4 @@ docker-compose logs dina-db
 psql -h localhost -p 5433 -U dina_user -d identity
 ```
 
----
 
-## Submission Requirements
-
-### Tugas 2 Submission
-- ✓ GitHub Repository: https://github.com/Irdinailmunaa/tst-dina-identity-portal
-- ✓ Formal Document: [TUGAS_2.md](./TUGAS_2.md)
-- ✓ Source Code: Complete implementation in `identity/service/`
-- ✓ Docker Setup: Working docker-compose.yml & docker-compose.prod.yml
-- ✓ Testing: Curl examples & verified endpoints
-- ✓ Deployment: Production-ready on STB
-
-### Tugas 3 Submission (Next)
-- ⏳ Portal Implementation: Admin/inspector panel
-- ⏳ Ratu Integration: API integration for attendance
-- ⏳ Makalah: Full technical paper in MAKALAH.md
-- ⏳ Deployment: Portal on https://dina.theokaitou.my.id:18081
-
----
-
-## Integration dengan Ratu Service
-
-**Koordinasi Tugas 3:**
-1. Dapatkan Ratu API endpoint URL (public)
-2. Tanya authentication method:
-   - Shared JWT_SECRET untuk kedua service?
-   - Atau API key terpisah?
-3. Request test endpoint untuk development
-4. Confirm request/response format:
-   - POST /checkins: `{"user_id": "...", "event_id": "...", ...}`
-   - GET /attendance/{event_id}: Response structure
-5. Update portal integration code
-
----
-
-## Resources & References
-
-- FastAPI Docs: https://fastapi.tiangolo.com/
-- JWT.io: https://jwt.io/
-- Bcrypt: https://github.com/pyca/bcrypt
-- Docker Best Practices: https://docs.docker.com/develop/dev-best-practices/
-- REST API Design: https://restfulapi.net/
-- PostgreSQL Docs: https://www.postgresql.org/docs/
-- Reference Project: Healthy Grocery Recommendation API (Favian & Ahmad)
-
----
-
-## Files Overview
-
-| File | Purpose |
-|------|---------|
-| TUGAS_2.md | Formal Tugas 2 document (submit this) |
-| README.md | Project overview & quick start |
-| ARCHITECTURE.md | System design & diagrams |
-| DEPLOYMENT.md | Step-by-step deployment guide |
-| docker-compose.yml | Development configuration |
-| docker-compose.prod.yml | Production configuration |
-| .env | Development secrets (git-ignored) |
-| .env.production | Production template |
-
----
-
-## Status Summary
-
-| Component | Status | Notes |
-|-----------|--------|-------|
-| Identity Service | ✓ Production Ready | All endpoints tested |
-| Docker Setup | ✓ Complete | Dev & prod compose files |
-| Documentation | ✓ Complete | TUGAS_2.md + guides |
-| Testing | ✓ Manual tested | Curl examples provided |
-| Deployment | ✓ Ready | Can deploy to STB |
-| Portal (Tugas 3) | ⏳ In Progress | UI ready, awaiting Ratu API |
-| Ratu Integration | ⏳ Blocked | Waiting for Ratu endpoints |
-
----
-
-**Created**: January 7, 2026  
-**Last Updated**: January 8, 2026  
-**Status**: Tugas 2 - Production Ready | Tugas 3 - Deployment Ready
-**Maintainer**: Irdinah Ilmunaa
-
----
-
-## Next Steps
-
-1. Test locally - Run curl commands above
-2. Review TUGAS_2.md - Ensure all requirements met
-3. Deploy to STB - Follow DEPLOYMENT.md
-4. Get Ratu API info - Coordinate with Ratu team
-5. Complete Tugas 3 - Portal + integration
-6. Write makalah - Full technical paper
-7. Submit - GitHub links + documentation

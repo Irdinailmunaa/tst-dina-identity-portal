@@ -59,6 +59,7 @@ tst-dina-identity-portal/
 │   └── nginx.key
 └── ticket.png
 
+
 ---
 
 ## CARA AKSES LAYANAN
@@ -214,34 +215,6 @@ curl -X GET http://localhost:18080/auth/me \
 # }
 ```
 
-#### Complete Test Flow
-```bash
-#!/bin/bash
-
-# 1. Register
-echo "=== REGISTER ==="
-REG=$(curl -s -X POST http://localhost:18080/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"secret123","role":"admin"}')
-echo $REG | jq .
-
-# 2. Login
-echo -e "\n=== LOGIN ==="
-LOGIN=$(curl -s -X POST http://localhost:18080/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"alice","password":"secret123"}')
-echo $LOGIN | jq .
-TOKEN=$(echo $LOGIN | jq -r '.access_token')
-
-# 3. Use token
-echo -e "\n=== GET USER INFO ==="
-curl -s -X GET http://localhost:18080/auth/me \
-  -H "Authorization: Bearer $TOKEN" | jq .
-
-# 4. Try invalid token
-echo -e "\n=== INVALID TOKEN (should fail) ==="
-curl -s -X GET http://localhost:18080/auth/me \
-  -H "Authorization: Bearer invalid_token" | jq .
 #### Complete Test Flow
 ```bash
 #!/bin/bash

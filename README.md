@@ -25,44 +25,39 @@
 
 ```
 tst-dina-identity-portal/
-├── identity/service/                # TUGAS 2: Identity Service (Core)
-│   ├── Dockerfile                   # Docker image configuration
-│   ├── requirements.txt              # Python dependencies
-│   └── app/
-│       ├── main.py                 # Endpoints: /register, /login, /auth/me
-│       ├── auth.py                 # JWT token validation dependency
-│       └── security.py             # Password hashing & JWT encode/decode
-│
-├── portal/service/                  # TUGAS 3: Portal + Ratu Integration
-│   ├── Dockerfile                   # Docker image configuration
-│   ├── requirements.txt              # Python dependencies (FastAPI, httpx, PyJWT, Jinja2)
-│   ├── app/
-│   │   ├── main.py                 # Portal endpoints & FastAPI app (7 endpoints)
-│   │   ├── attendance_client.py     # Ratu API client (JWT + HTTP calls)
-│   │   ├── proxy.py                # Proxy to identity & Ratu services
-│   │   └── security.py             # Password & JWT utilities
-│   ├── templates/
-│   │   └── index.html              # Portal UI (landing page + admin panel)
-│   └── static/
-│       ├── app.js                  # JavaScript for API interactions
-│       ├── styles.css              # Portal styling
-│       └── ticket.png              # TixGo logo/ticket icon
-│
-├── ssl/                             # SSL certificates for HTTPS
-│   ├── nginx.crt                   # SSL certificate
-│   └── nginx.key                   # SSL private key
-│
-├── .gitignore                       # Git ignore rules
-├── docker-compose.yml              # Development setup (3 services)
-├── docker-compose.prod.yml         # Production setup (4 services + nginx)
-├── nginx-prod.conf                 # Nginx reverse proxy configuration
-├── TUGAS_2.md                      # TUGAS 2 formal document
-├── MAKALAH.md                      # TUGAS 3 paper (in progress)
-├── ARCHITECTURE.md                 # System design & integration flows
-├── DEPLOYMENT.md                   # Step-by-step deployment guide
-├── README.md                       # This file - complete documentation
-└── .env.example                    # Environment variables template
-```
+├── README.md
+├── docker-compose.prod.yml
+├── docker-compose.yml
+├── identity
+│   └── service
+│       ├── Dockerfile
+│       ├── app
+│       │   ├── __init__.py
+│       │   ├── auth.py
+│       │   ├── main.py
+│       │   └── security.py
+│       └── requirements.txt
+├── nginx-prod.conf
+├── portal
+│   └── service
+│       ├── Dockerfile
+│       ├── app
+│       │   ├── __init__.py
+│       │   ├── attendance_client.py
+│       │   ├── main.py
+│       │   ├── proxy.py
+│       │   └── ratu_client.py
+│       ├── requirements.txt
+│       ├── static
+│       │   ├── app.js
+│       │   ├── styles.css
+│       │   └── ticket.png
+│       └── templates
+│           └── index.html
+├── ssl
+│   ├── nginx.crt
+│   └── nginx.key
+└── ticket.png
 
 ---
 

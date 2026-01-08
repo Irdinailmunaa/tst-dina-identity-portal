@@ -1,12 +1,48 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+import jwt
+import os
 from .proxy import IDENTITY_BASE_URL, ATTENDANCE_BASE_URL, forward_json
+from .attendance_client import create_attendance_client, AttendanceClient
 
 app = FastAPI(title="TST Identity Portal (Dina)", version="1.0.0")
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# JWT configuration for token validation
+JWT_SECRET = os.getenv("JWT_SECRET", "RatuDinaTST2026_")
+JWT_ALG = os.getenv("JWT_ALG", "HS256")
+
+# Initialize attendance client
+attendance_client: AttendanceClient | None = None
+try:
+    attendance_client = create_attendance_client()
+except RuntimeError:
+    pass  # Will fail at runtime if needed but service can start
+
+
+def get_current_user(request: Request) -> dict:
+    """
+    Extract and validate JWT token from Authorization header
+    
+    Returns:
+        Token claims including 'sub' (user_id)
+    """
+    auth_header = request.headers.get("authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    
+    token = auth_header[7:]  # Remove "Bearer " prefix
+    
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALG])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 @app.get("/health")
 def health():
@@ -33,17 +69,87 @@ async def proxy_me(request: Request):
     headers = {"authorization": auth} if auth else {}
     return await forward_json("GET", f"{IDENTITY_BASE_URL}/auth/me", headers=headers)
 
-# Attendance Ratu public
+# Attendance Ratu public - with AttendanceClient integration
 @app.post("/api/checkins")
-async def proxy_checkins(request: Request):
-    auth = request.headers.get("authorization")
-    headers = {"authorization": auth} if auth else {}
+async def create_checkin(request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    Create a new check-in record
+    
+    Uses AttendanceClient for direct communication with Ratu service.
+    Validates JWT token and forwards request with user context.
+    
+    Body:
+        {
+            "event_id": "E001",
+            "ticket_id": "T001"
+        }
+    """
+    if not attendance_client:
+        # Fallback to proxy if client not initialized
+        auth = request.headers.get("authorization", "")
+        headers = {"authorization": auth} if auth else {}
+        body = await request.json()
+        return await forward_json("POST", f"{ATTENDANCE_BASE_URL}/checkins", headers=headers, json=body)
+    
     body = await request.json()
-    return await forward_json("POST", f"{ATTENDANCE_BASE_URL}/checkins", headers=headers, json=body)
+    user_id = current_user.get("sub", "unknown")
+    
+    result = await attendance_client.create_checkin(
+        event_id=body.get("event_id"),
+        ticket_id=body.get("ticket_id"),
+        user_id=user_id
+    )
+    return result
+
 
 @app.get("/api/attendance/{event_id}")
-async def proxy_attendance(event_id: str, request: Request):
-    auth = request.headers.get("authorization")
-    headers = {"authorization": auth} if auth else {}
-    return await forward_json("GET", f"{ATTENDANCE_BASE_URL}/attendance/{event_id}", headers=headers)
+async def get_event_attendance(event_id: str, request: Request, current_user: dict = Depends(get_current_user)):
+    """
+    Get attendance summary for an event
+    
+    Uses AttendanceClient for direct communication with Ratu service.
+    Validates JWT token and retrieves attendance data.
+    
+    Parameters:
+        event_id: Event identifier (e.g., "E001")
+    """
+    if not attendance_client:
+        # Fallback to proxy if client not initialized
+        auth = request.headers.get("authorization", "")
+        headers = {"authorization": auth} if auth else {}
+        return await forward_json("GET", f"{ATTENDANCE_BASE_URL}/attendance/{event_id}", headers=headers)
+    
+    user_id = current_user.get("sub", "unknown")
+    
+    result = await attendance_client.get_attendance(
+        event_id=event_id,
+        user_id=user_id
+    )
+    return result
+
+
+@app.get("/api/checkins")
+async def get_user_checkins(event_id: str | None = None, request: Request = None, current_user: dict = Depends(get_current_user)):
+    """
+    Get check-ins for the current user
+    
+    Optional filter by event_id.
+    
+    Query Parameters:
+        event_id: Optional event identifier to filter check-ins
+    """
+    if not attendance_client:
+        # Fallback to proxy if client not initialized
+        auth = request.headers.get("authorization", "")
+        headers = {"authorization": auth} if auth else {}
+        params = f"?event_id={event_id}" if event_id else ""
+        return await forward_json("GET", f"{ATTENDANCE_BASE_URL}/checkins{params}", headers=headers)
+    
+    user_id = current_user.get("sub", "unknown")
+    
+    result = await attendance_client.get_user_checkins(
+        user_id=user_id,
+        event_id=event_id
+    )
+    return result
 

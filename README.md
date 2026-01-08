@@ -1,6 +1,6 @@
-# DINA - TST Identity Service (Tugas 2) & Attendance Integration Portal (Tugas 3)
+# Identity Service & Attendance Integration Portal TixGo
 
-**DINA** adalah sistem terintegrasi untuk identity management dan operational attendance portal yang terhubung dengan Ratu Attendance Service. Dikembangkan sebagai submission untuk **UAS II3160 Teknologi Sistem Terintegrasi**.
+**TixGo** adalah sistem terintegrasi untuk identity management dan operational attendance portal yang terhubung dengan Ratu Attendance Service. Dikembangkan sebagai submission untuk **UAS II3160 Teknologi Sistem Terintegrasi**.
 
 ## Project Summary
 
@@ -51,7 +51,7 @@ tst-dina-identity-portal/
 
 ### Akses dari Browser (Recommended)
 
-#### 1. Portal DINA (Identity + Attendance Integration)
+#### 1. Portal Identity (Identity + Attendance Integration)
 ```
 URL: https://dina.theokaitou.my.id
 Port: 443 (HTTPS)
@@ -143,16 +143,6 @@ curl http://localhost:18081/health | jq .
 curl http://localhost:18080/health | jq .
 ```
 
-### TUGAS 2: Identity Service Endpoints
-
-| Method | Endpoint | Purpose | Auth |
-|--------|----------|---------|------|
-| GET | `/` | Welcome & endpoint list | No |
-| GET | `/health` | Health check | No |
-| POST | `/auth/register` | Register user | No |
-| POST | `/auth/login` | Login & get JWT | No |
-| GET | `/auth/me` | Get current user info |  Bearer token |
-| GET | `/docs` | Swagger UI | ❌ |
 
 ### API Examples (Curl Commands)
 
